@@ -1,0 +1,9 @@
+<ion-view view-title="Alarm">
+    <ion-content>
+       <ion-item ng-repeat="alarm in alarmList">
+           {{alarm.content}}
+           <object align="right">Time: {{ alarm.time | date : 'short' : 'locale'}}</object>
+       </ion-item>
+       
+    </ion-content>
+</ion-view>
