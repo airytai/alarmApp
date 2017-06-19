@@ -18,7 +18,7 @@ angular.module('AlarmApp.services', [])
     })
 
     .factory('Utils', function() {
-    	return {
+        return function(){
             // input: date string (i.e. 2018-11-21T08:45)
             // output: timestamp (in ms)
             // parseDateStr: function(dateStr) {
@@ -35,7 +35,7 @@ angular.module('AlarmApp.services', [])
             //     var date = (ddl.getTime() - timezone * 60000) / 1000;
             //     return new Date(date * 1000);
             // }
-            showDate: function(date_object)
+            self.showDate = function(date_object)
             {
                 // 01234567891011121314151617181920212223
                 // Mon Jun 19  2 0 1 7   0 0 : 0 7 : 4 5 GMT+0800 (CST)
@@ -46,6 +46,13 @@ angular.module('AlarmApp.services', [])
                 // var noon = date_string.substring(16,18);
                 var hour = addZero(date_object.getHours());
                 var noon = checkNoon(hour);
+                if(noon == "下午")
+                {
+                    if(hour != 12)
+                    {
+                        hour -= 12;
+                    }
+                }
                 var minute = addZero(date_object.getMinutes());
                 var date = addZero(date_object.getDate());
                 var month = addZero(date_object.getMonth());
@@ -57,24 +64,36 @@ angular.module('AlarmApp.services', [])
                             <p style=\"font-size:14pt; height:14pt; color:black\">"+noon+"</p> \
                             <p style=\"font-size:16pt; height:14pt; color:black\">"+hour+":"+minute+"</p>";
 
-                function checkNoon(i){
-                    if(i<12)
-                    {
-                        return "上午";
-                    }else{
-                        if(i != 12)
-                        {
-                            hour = hour - 12;
-                        }
-                        return noon = "下午";
-                    }
+            },
+            self.formatClock = function(hour, minute)
+            {
+                if(hour < 12)
+                {
+                    return "上午 " + addZero(hour) + ":" + addZero(minute);
                 }
-                function addZero(i){
-                    if (i < 10) {
-                        i = "0" + i;
-                    }
-                    return i;
+                if(hour == 12)
+                {
+                    return "下午 " + addZero(hour) + ":" + addZero(minute);
                 }
+                return "下午 " + addZero(hour-12) + ":" + addZero(minute);
+            },
+            self.checkNoon = function(i)
+            {
+                if(i<12)
+                {
+                    return "上午";
+                }else{
+                    return "下午";
+                }
+            },
+            self.addZero = function(i)
+            {
+                if (i < 10) {
+                    i = "0" + i;
+                }
+                return i;
             }
+
+            return self;
     	};
     })

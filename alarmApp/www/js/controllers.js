@@ -137,7 +137,7 @@ angular.module('AlarmApp.controllers', [])
     })
     
     .controller('AlarmCtrl', function($scope, $ionicPopup, Alarm, $rootScope,
-     $cordovaLocalNotification, $ionicPlatform, Utils){
+     $cordovaLocalNotification, $ionicPlatform, Utils, $state){
 
         console.log("HomeCtrl is ready");
 
@@ -145,7 +145,7 @@ angular.module('AlarmApp.controllers', [])
             $scope.myDate = new Date();
             // Mon Jun 19 2017 00:02:28 GMT+0800 (CST)
             // var date_holder = ($scope.myDate).toString();
-            Utils.showDate($scope.myDate);
+            (new Utils()).showDate($scope.myDate);
             $scope.alarm = {};
             $rootScope.alarmList = {};
             $scope.alarm.id = ((new Date($scope.myDate)).getTime()) /1000;
@@ -153,10 +153,86 @@ angular.module('AlarmApp.controllers', [])
             $rootScope.alarmList[$scope.alarm.id] = alarm;
             localStorage.setItem('alarmList', angular.toJson($rootScope.alarmList));
         });
+
+        $scope.addAlarm = function(){
+            console.log("add");
+            $state.go('add');
+        }
+
         
+    })
+    
+    .controller('SoundCtrl', function($scope){
 
+        console.log("SoundCtrl is ready");
+    })
 
-        $ionicPlatform.ready(function () {
+    .controller('AddCtrl', function($scope, ionicTimePicker, $cordovaImagePicker, Utils, $ionicPopup){
+
+        console.log("AddCtrl is ready");
+        $scope.alarm = [];
+        var localTimeOffSet = (new Date()).getTimezoneOffset();
+        $scope.$on("$ionicView.beforeEnter", function(event, data){
+            // GMT+0800 (CST)
+            var current = new Date();
+            document.getElementById("time").innerHTML = (new Utils()).formatClock(current.getHours(), current.getMinutes());
+            $scope.alarm.time = current;
+            $scope.alarm.image = 'img/smell.png';
+        });
+
+        // getHours(): get the set hour
+        // getMinutes(): get the set minutes
+        // GMT + 8
+        $scope.setTime = function(){
+            console.log("setTime");
+            var timePicker = {
+                callback: function (val) {      //Mandatory
+                    if (typeof (val) === 'undefined') {
+                        alert('請選擇時間');
+                    } else {
+                        // GMT+0800 (CST)
+                        var selectedTime = new Date((val + localTimeOffSet * 60)* 1000);
+                        console.log(selectedTime);
+                        // update the alarm time
+                        $scope.alarm.time = selectedTime;
+                        console.log('Selected epoch is : ', val, 'and the time is ', selectedTime.getHours(), 'H :', selectedTime.getMinutes(), 'M');
+                        document.getElementById('time').innerHTML = (new Utils()).formatClock(selectedTime.getHours(), selectedTime.getMinutes());
+                    }
+                },
+                inputTime: ($scope.alarm.time).getHours() * 3600 + ($scope.alarm.time).getMinutes() * 60,
+                // (((new Date()).getHours() * 60 * 60) + ((new Date()).getMinutes() * 60)),
+                format: 12,
+                step: 1,
+                setLabel: '確定',
+                closeLabel: '取消'
+            };
+
+            ionicTimePicker.openTimePicker(timePicker);
+        }
+
+        $scope.setImage = function(){
+            var options = {
+                maximumImagesCount: 1,
+                quality: 80
+            };
+
+            $cordovaImagePicker.getPictures(options)
+                .then(function (results) {
+                for (var i = 0; i < results.length; i++) {
+                    console.log("選擇圖片： " + results[i]);
+                    document.getElementById('image').innerHTML = "自定義";
+                    $scope.alarm.image = results[i];
+                }
+                }, function(error) {
+                    alert("選擇失敗，請重試");
+            });
+        }
+    });
+
+// "登錄密碼將發送到你的郵箱"
+
+/*
+ $ionicPlatform.ready(function () {
             if (ionic.Platform.isWebView()) {
                 $rootScope.alarmList = {};
                     if(localStorage.getItem('alarmList') != null){
@@ -209,49 +285,5 @@ angular.module('AlarmApp.controllers', [])
                     }
             }
         })
-
-        
-    })
-    
-    .controller('SoundCtrl', function($scope){
-
-        console.log("SoundCtrl is ready");
-    })
-
-    .controller('AddCtrl', function($scope, ionicTimePicker){
-
-        console.log("AddCtrl is ready");
-        $scope.alarm = [];
-        $scope.$on("$ionicView.beforeEnter", function(event, data){
-            var current = new Date();
-            document.getElementById("time").innerHTML = current.getHours() + ":" + current.getMinutes();
-
-            $scope.defaultImage;
-            $scope.defaultSound;
-        });
-
-        $scope.setTime = function(){
-            console.log("setTime");
-            var timePicker = {
-                callback: function (val) {      //Mandatory
-                    if (typeof (val) === 'undefined') {
-                        alert('請選擇時間');
-                    } else {
-                        var selectedTime = new Date(val * 1000);
-                        $scope.alarm.time = selectedTime;
-                        console.log('Selected epoch is : ', val, 'and the time is ', selectedTime.getUTCHours(), 'H :', selectedTime.getUTCMinutes(), 'M');
-                        document.getElementById('time').innerHTML = selectedTime.getUTCHours() + ":" + selectedTime.getUTCMinutes();
-                    }
-                },
-                inputTime: (((new Date()).getHours() * 60 * 60) + ((new Date()).getMinutes() * 60)),
-                format: 12,
-                step: 1,
-                setLabel: '確定',
-                closeLabel: '取消'
-            };
-
-            ionicTimePicker.openTimePicker(timePicker);
-        }
-    });
-
-// "登錄密碼將發送到你的郵箱"
+ 
+ */

@@ -67,6 +67,6 @@ angular.module('AlarmApp', ['ionic', 'AlarmApp.controllers', 'AlarmApp.services'
                 controller: 'AddCtrl'
             });
 
-        $urlRouterProvider.otherwise('');
+        $urlRouterProvider.otherwise('/');
 
     });
