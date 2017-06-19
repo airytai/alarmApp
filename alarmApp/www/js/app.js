@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('AlarmApp', ['ionic', 'AlarmApp.controllers', 'AlarmApp.services', 'ngCordova'])
+angular.module('AlarmApp', ['ionic', 'AlarmApp.controllers', 'AlarmApp.services', 'AlarmApp.server', 'ngCordova', 'ds.clock', 'ionic-timepicker'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -23,6 +23,10 @@ angular.module('AlarmApp', ['ionic', 'AlarmApp.controllers', 'AlarmApp.services'
   });
 })
 
+.constant('apiEndpoint', {
+  url: 'http://selfcare.imse.hku.hk/alarmApp/ionic/'
+})
+
 .config(function($stateProvider, $urlRouterProvider) {
         // Ionic uses AngularUI Router which uses the concept of states
         // Learn more here: https://github.com/angular-ui/ui-router
@@ -31,12 +35,38 @@ angular.module('AlarmApp', ['ionic', 'AlarmApp.controllers', 'AlarmApp.services'
         $stateProvider
 
             // setup an abstract state for the tabs directive
+            .state('login', {
+              url: '/login',
+              cache: false,
+              templateUrl: 'templates/login.html',
+              controller: 'LoginCtrl'
+            })
             .state('home', {
                 url: '/',
                 templateUrl: 'templates/home.html',
                 controller: 'AlarmCtrl'
+            })
+            .state('register', {
+                url: '/register',
+                templateUrl: 'templates/register.html',
+                controller: 'RegisterCtrl'
+            })
+            .state('forgetPassword', {
+                url: '/forgetPassword',
+                templateUrl: 'templates/forgetPassword.html',
+                controller: 'ForgetPasswordCtrl'
+            })
+            .state('sound', {
+                url: '/sound',
+                templateUrl: 'templates/sound.html',
+                controller: 'SoundCtrl'
+            })
+            .state('add', {
+                url: '/add',
+                templateUrl: 'templates/add.html',
+                controller: 'AddCtrl'
             });
 
-        $urlRouterProvider.otherwise('/');
+        $urlRouterProvider.otherwise('');
 
     });
