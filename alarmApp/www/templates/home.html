@@ -1,27 +1,28 @@
-<ion-view view-title="Alarm">
+<ion-view hide-nav-bar="true">
     <ion-content>
+        <ion-item>
             <div align="center">
-            <div style="width:85%;">
-            <table>
-                <tr>
-                    <td style="width:45%; background:red" align="left">
-                        <ion-label id="date" style="width:100%"></ion-label>
-                    </td>
-                    <td style="width:15%; background:blue">&nbsp;</td>
-                    <td style="width:40%; background:green" align="right">
-                        <ds-widget-clock theme="light" show-analog="true" show-digital="false"></ds-widget-clock>
-                    </td>
-                </tr>
-            </table>
+            <div style="width:80%; padding-top:8pt;">
+                <div style="width:40%; display:float; float:left">
+                    <p id="date" style="width:100%; color:black; font-size:12pt; margin-top:24pt;" align="left">{{date}}</p>
+                    <p id="date" style="width:100%; color:black; font-size:22pt; height:26pt; margin-top:5pt" align="left">{{clock}}</p>
+                </div>
+                <div style="width:40%; display:float; float:right; padding-bottom:8pt">
+                    <ds-widget-clock theme="light" show-analog="true" show-digital="false"></ds-widget-clock>
+                </div>
             </div>
             </div>
-        <ion-item style="background:#ffcf70; line-height:5pt;" class="item-text-wrap"> 
-            <span style="color:white">提醒列表</span><object align="right"><span style="background:#c1c1c1;padding:3pt 7pt;color:black" ng-click="addAlarm()">添加</span></object>
+        </ion-item>
+        <ion-item style="background:#ffb063;">
+            <span style="color:white">提醒列表</span>
+            <object align="right">
+                <span style="background:#c1c1c1;padding:3pt 7pt;color:black" ng-click="clearAlarm()">Clear All</span>
+                <span style="background:#c1c1c1;padding:3pt 7pt;color:black" ng-click="addAlarm()">添加</span>
+            </object>
         </ion-item>
     
-    <ion-item ng-repeat="alarm in alarmList" style="line-height:5pt;">
-        {{alarm.content}}
-        <object align="right">Time: {{ alarm.time | date : 'short' : 'locale'}}</object>
-    </ion-item>
+        <ion-item ng-repeat="alarm in alarmList" ng-click="removeAlarm(alarm)">
+            {{alarm.string}}
+        </ion-item>
     </ion-content>
 </ion-view>

@@ -3,12 +3,13 @@ angular.module('AlarmApp.services', [])
     .factory('Alarm', function() 
     {
         return function(){
-            self.addAlarm = function(id, time, content)
+            self.addAlarm = function(id, hour, minute, string)
             {
                 var alarm = {
                     id : id,
-                    time: time,
-                    content: content
+                    hour: hour,
+                    minute: minute,
+                    string: string
                 };
                 return alarm;
             }
@@ -55,14 +56,14 @@ angular.module('AlarmApp.services', [])
                 }
                 var minute = addZero(date_object.getMinutes());
                 var date = addZero(date_object.getDate());
-                var month = addZero(date_object.getMonth());
+                var month = addZero(date_object.getMonth()+1);
                 var year = date_object.getFullYear();
                 var day = date_object.getDay();
                 
-                document.getElementById("date").innerHTML = 
-                    "<p style=\"font-size:12pt; height:16pt; color:black\">"+year+"年"+month+"月"+date+"日</p> \
-                            <p style=\"font-size:14pt; height:14pt; color:black\">"+noon+"</p> \
-                            <p style=\"font-size:16pt; height:14pt; color:black\">"+hour+":"+minute+"</p>";
+                // document.getElementById("date").innerHTML = 
+                //     "<p style=\"font-size:12pt; height:16pt; color:black\">"+year+"年"+month+"月"+date+"日</p> \
+                //             <p style=\"font-size:14pt; height:14pt; color:black\">"+noon+"</p> \
+                //             <p style=\"font-size:16pt; height:14pt; color:black\">"+hour+":"+minute+"</p>";
 
             },
             self.formatClock = function(hour, minute)

@@ -1,1 +1,12 @@
-This is sound page
+<ion-view view-title="選擇鈴聲">
+    <ion-nav-buttons side="secondary">
+        <!--Couldn't get the pencil icon to align right. Maybe someone with better HTML/CSS skills can fix it!-->
+        <button class="button button-positive" ng-click="selectSound()">確定</button>
+    </ion-nav-buttons>
+    <ion-content>
+        <!-- https://stackoverflow.com/questions/16296670/angular-ng-repeat-error-duplicates-in-a-repeater-are-not-allowed -->
+        <ion-radio ng-repeat="ringtone in ringtones track by $index" ng-click="playSound(ringtone)" ng-model="choice" ng-value="ringtone.Name">
+            {{ringtone.Name}}
+        </ion-radio>
+    </ion-content>
+</ion-view>

@@ -4,7 +4,11 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 angular.module('AlarmApp', ['ionic', 'AlarmApp.controllers', 'AlarmApp.services', 'AlarmApp.server', 'ngCordova', 'ds.clock', 'ionic-timepicker'])
-
+.config(function($ionicConfigProvider) {
+    // $ionicConfigProvider.backButton.previousTitleText(false).text('');
+    $ionicConfigProvider.views.swipeBackEnabled(false);
+    //$ionicConfigProvider.scrolling.jsScrolling(true);
+})
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -21,6 +25,69 @@ angular.module('AlarmApp', ['ionic', 'AlarmApp.controllers', 'AlarmApp.services'
       StatusBar.styleDefault();
     }
   });
+})
+
+.factory('ClockSrv', function($interval) {
+  'use strict';
+  var service = {
+    clock: addClock,
+    cancelClock: removeClock
+  };
+
+  var clockElts = [];
+  var clockTimer = null;
+  var cpt = 0;
+
+  function addClock(fn) {
+    var elt = {
+      id: cpt++,
+      fn: fn
+    };
+    clockElts.push(elt);
+    if (clockElts.length === 1) {
+      startClock();
+    }
+    return elt.id;
+  }
+
+  function removeClock(id) {
+    for (var i in clockElts) {
+      if (clockElts[i].id === id) {
+        clockElts.splice(i, 1);
+      }
+    }
+    if (clockElts.length === 0) {
+      stopClock();
+    }
+  }
+
+  function startClock() {
+    if (clockTimer === null) {
+      clockTimer = $interval(function() {
+        for (var i in clockElts) {
+          clockElts[i].fn();
+        }
+      }, 1000);
+    }
+  }
+
+  function stopClock() {
+    if (clockTimer !== null) {
+      $interval.cancel(clockTimer);
+      clockTimer = null;
+    }
+  }
+
+  return service;
+})
+
+.run(function($rootScope, $filter, ClockSrv) {
+    ClockSrv.clock(function() {
+    // console.log($filter('date')(Date.now(), 'yyyy-MM-dd HH:mm:ss')); 
+    $rootScope.date = $filter('date')(Date.now(), 'yyyy年MM月dd日');
+    $rootScope.clock = $filter('date')(Date.now(), 'HH:mm');
+  });
+                 
 })
 
 .constant('apiEndpoint', {
@@ -44,7 +111,7 @@ angular.module('AlarmApp', ['ionic', 'AlarmApp.controllers', 'AlarmApp.services'
             .state('home', {
                 url: '/',
                 templateUrl: 'templates/home.html',
-                controller: 'AlarmCtrl'
+                controller: 'HomeCtrl'
             })
             .state('register', {
                 url: '/register',
@@ -59,7 +126,10 @@ angular.module('AlarmApp', ['ionic', 'AlarmApp.controllers', 'AlarmApp.services'
             .state('sound', {
                 url: '/sound',
                 templateUrl: 'templates/sound.html',
-                controller: 'SoundCtrl'
+                controller: 'SoundCtrl',
+                params: {
+                    ringtones: 'Ringtones'
+                }
             })
             .state('add', {
                 url: '/add',
